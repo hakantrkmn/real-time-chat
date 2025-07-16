@@ -1,98 +1,139 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Real-Time Chat Application
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Bu proje, NestJS, MongoDB ve WebSockets (Socket.IO) kullanılarak geliştirilmiş gerçek zamanlı bir sohbet uygulamasıdır. Kullanıcılar ve sohbet odaları için REST API'ler, anlık mesajlaşma için ise bir WebSocket arayüzü içerir.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Özellikler
 
-## Description
+- **Kullanıcı Yönetimi**: Yeni kullanıcı oluşturma, listeleme ve detaylarını görme.
+- **Sohbet Odası Yönetimi**: Yeni sohbet odası oluşturma ve oda bilgilerini getirme.
+- **Gerçek Zamanlı Mesajlaşma**: Socket.IO aracılığıyla odalarda anlık mesajlaşma.
+- **Veri Kalıcılığı**: Tüm kullanıcı, oda ve mesaj verileri MongoDB'de saklanır.
+- **İlişkisel Veri Yapısı**: Kullanıcılar ve sohbet odaları arasında ilişkiler kurulmuştur.
+- **Yapılandırılmış Mimari**: Proje, NestJS'in modüler yapısına uygun olarak `Users`, `Chat`, ve `ChatRoom` modüllerine ayrılmıştır.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Kullanılan Teknolojiler
 
-## Project setup
+- **Backend**: [NestJS](https://nestjs.com/)
+- **Veritabanı**: [MongoDB](https://www.mongodb.com/) (Mongoose ile)
+- **Gerçek Zamanlı İletişim**: [Socket.IO](https://socket.io/)
+- **Dil**: [TypeScript](https://www.typescriptlang.org/)
 
-```bash
-$ npm install
+## Kurulum ve Başlatma
+
+Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin.
+
+### Gereksinimler
+
+- [Node.js](https://nodejs.org/en/) (v18 veya üstü)
+- `npm` veya `yarn` paket yöneticisi
+- Çalışan bir [MongoDB](https://www.mongodb.com/try/download/community) veritabanı
+
+### Adımlar
+
+1.  **Projeyi Klonlayın:**
+
+    ```bash
+    git clone <repository-url>
+    cd real-time-chat
+    ```
+
+2.  **Bağımlılıkları Yükleyin:**
+
+    ```bash
+    npm install
+    ```
+
+3.  **Veritabanı Bağlantısı:**
+    `src/app.module.ts` dosyasındaki MongoDB bağlantı adresini kendi adresinizle güncelleyin.
+
+    ```typescript
+    // src/app.module.ts
+    MongooseModule.forRoot('mongodb://localhost:27017/realTimeChat'),
+    ```
+
+    Production ortamları için bu bilgiyi bir `.env` dosyasında saklamanız önerilir.
+
+4.  **Uygulamayı Çalıştırın:**
+    ```bash
+    # Geliştirme modunda çalıştırmak için (hot-reload ile):
+    npm run start:dev
+    ```
+    Uygulama varsayılan olarak `http://localhost:3000` adresinde çalışmaya başlayacaktır.
+
+## API Endpoints
+
+Uygulama, kullanıcı ve sohbet odası yönetimi için aşağıdaki REST API endpoint'lerini içerir.
+
+### Kullanıcılar (`/users`)
+
+- **`POST /users`**: Yeni bir kullanıcı oluşturur.
+  - **Body**: `{ "username": "kullanici_adi" }`
+
+- **`GET /users`**: Tüm kullanıcıları listeler.
+
+- **`GET /users/:id`**: Belirtilen ID'ye sahip kullanıcıyı, katıldığı sohbet odalarıyla birlikte getirir.
+
+### Sohbet Odaları (`/chat-room`)
+
+- **`POST /chat-room`**: Yeni bir sohbet odası oluşturur.
+  - **Body**: `{ "name": "Oda Adı", "createdBy": "kullanici_id" }`
+
+- **`GET /chat-room/:id/messages`**: Belirtilen sohbet odasının mesajlarını, gönderen kullanıcı bilgileriyle birlikte getirir.
+
+## WebSocket API
+
+Gerçek zamanlı mesajlaşma için Socket.IO kullanılır.
+
+- **Bağlantı Adresi**: `http://localhost:3000`
+
+### Gönderilecek Olaylar (Client → Server)
+
+- **`message`**: Bir sohbet odasına yeni bir mesaj gönderir.
+  - **Payload**: `{ "message": "Mesaj içeriği", "chatRoomName": "Oda Adı", "senderId": "gonderen_kullanici_id" }`
+
+- **`joinRoom`**: Bir kullanıcıyı belirli bir sohbet odasına dahil eder. (Bu özellik henüz eklenmemiştir, gateway'e eklenebilir.)
+  - **Örnek Payload**: `{ "roomId": "oda_id", "userId": "kullanici_id" }`
+
+### Dinlenecek Olaylar (Server → Client)
+
+- **`message`**: Bir odaya yeni bir mesaj geldiğinde tüm istemcilere yayınlanır.
+  - **Payload**: `{ "message": { "content": "...", "sender": {...} }, "clientId": "...", "timestamp": "..." }`
+
+- **`error`**: Bir işlem sırasında hata oluştuğunda tetiklenir.
+  - **Payload**: `{ "message": "Hata açıklaması" }`
+
+## Örnek İstemci Kodu (JavaScript)
+
+Basit bir HTML/JS istemcisi ile uygulamayı test edebilirsiniz.
+
+```html
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  const socket = io('http://localhost:3000');
+
+  socket.on('connect', () => {
+    console.log('Sunucuya bağlanıldı! ID:', socket.id);
+
+    // Bir odaya mesaj gönder
+    socket.emit('message', {
+      message: 'Herkese merhaba!',
+      chatRoomName: 'Genel Sohbet', // Önceden oluşturulmuş bir oda olmalı
+      senderId: '60c72b2f9b1d8c001f8e4c6a', // Geçerli bir kullanıcı ID'si olmalı
+    });
+  });
+
+  // Yeni mesajları dinle
+  socket.on('message', (data) => {
+    console.log('Yeni mesaj geldi:', data);
+  });
+
+  // Hataları dinle
+  socket.on('error', (error) => {
+    console.error('Bir hata oluştu:', error.message);
+  });
+</script>
 ```
 
-## Compile and run the project
+## Lisans
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Bu proje [MIT](LICENSE) lisansı ile lisanslanmıştır.
