@@ -15,4 +15,9 @@ export class UsersController {
   async getUserById(@Param('id') id: string): Promise<User> {
     return this.usersService.getUserById(id);
   }
+
+  @Get()
+  async getAllUsers(): Promise<User[]> {
+    return this.usersService.getAllUsers();
+  }
 }

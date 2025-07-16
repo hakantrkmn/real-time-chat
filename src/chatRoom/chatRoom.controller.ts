@@ -18,4 +18,10 @@ export class ChatRoomController {
   async getChatRoomMessages(@Param('id') id: string) {
     return await this.chatRoomService.getChatRoomMessages(id);
   }
+
+  @Get()
+  async getAllChatRooms() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return await this.chatRoomService.getAllChatRooms();
+  }
 }

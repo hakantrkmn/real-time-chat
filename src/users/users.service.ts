@@ -27,6 +27,7 @@ export class UsersService {
   }
 
   async getUserById(id: string): Promise<UserDocument> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const user = await this.userModel
       .findById(id)
       .populate(this.usersFactory.getUserByIdOptions())
@@ -35,6 +36,25 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('Kullanıcı bulunamadı');
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return user;
+  }
+  async getUserModelById(id: string): Promise<UserDocument> {
+    const user = await this.userModel.findById(id).exec();
+
+    if (!user) {
+      throw new NotFoundException('Kullanıcı bulunamadı');
+    }
+
+    return user;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return this.userModel
+      .find()
+      .populate(this.usersFactory.getUserByIdOptions())
+      .transform(this.usersFactory.removeIdAndVersion().transform)
+      .exec();
   }
 }

@@ -40,7 +40,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       payload.senderId,
     );
     // Gelen mesajı tüm bağlı clientlara yayınla
-    this.server.emit('message', {
+    this.server.emit(payload.chatRoomName, {
       message: message,
       clientId: client.id,
       timestamp: new Date(),

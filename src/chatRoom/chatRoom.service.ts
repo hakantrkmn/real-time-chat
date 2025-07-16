@@ -9,7 +9,6 @@ import { Model } from 'mongoose';
 import { ChatRoom, ChatRoomDocument } from 'src/schemas/chatRoom.schema';
 import { UsersService } from 'src/users/users.service';
 import { ChatRoomFactory } from './chatRoom.factory';
-
 @Injectable()
 export class ChatRoomService {
   constructor(
@@ -29,13 +28,13 @@ export class ChatRoomService {
     if (existingChatRoom) {
       throw new ConflictException('Bu chat odası zaten mevcut');
     }
-
-    const chatRoom = new this.chatRoomModel({ name, createdBy });
-    const savedChatRoom = await chatRoom.save();
-    const user = await this.usersService.getUserById(createdBy);
+    const user = await this.usersService.getUserModelById(createdBy);
     if (!user) {
       throw new NotFoundException('Kullanıcı bulunamadı');
     }
+    const chatRoom = new this.chatRoomModel({ name, createdBy });
+    const savedChatRoom = await chatRoom.save();
+
     console.log(user);
     user.chatRooms.push(savedChatRoom._id as string);
     await user.save();
@@ -46,16 +45,18 @@ export class ChatRoomService {
     message: string,
     senderId: string,
   ) {
+    console.log(chatRoomId);
     const chatRoom = await this.chatRoomModel.findById(chatRoomId).exec();
     if (!chatRoom) {
       throw new NotFoundException('Chat odası bulunamadı');
     }
-    const user = await this.usersService.getUserById(senderId);
+    const user = await this.usersService.getUserModelById(senderId);
     if (!user) {
       throw new NotFoundException('Kullanıcı bulunamadı');
     }
     chatRoom.messages.push({ content: message, sender: user });
-    return await chatRoom.save();
+    await chatRoom.save();
+    return { content: message, sender: user };
   }
 
   async getChatRoomIdByName(name: string) {
@@ -75,5 +76,14 @@ export class ChatRoomService {
       throw new NotFoundException('Chat odası bulunamadı');
     }
     return chatRoom.messages;
+  }
+
+  async getAllChatRooms() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return this.chatRoomModel
+      .find()
+      .populate(this.chatRoomFactory.getChatRoomMessagesOptions())
+      .transform(this.chatRoomFactory.removeIdAndVersion().transform)
+      .exec();
   }
 }
