@@ -11,7 +11,11 @@ export class ChatRoomFactory {
     return {
       path: 'messages.sender',
       select: 'username',
-      populate: { path: 'chatRooms', select: 'name' },
+      populate: {
+        path: 'chatRooms',
+        select: 'name',
+        ...this.removeIdAndVersion(),
+      },
       ...this.removeIdAndVersion(),
     };
   }

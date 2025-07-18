@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ChatRoom } from 'src/schemas/chatRoom.schema';
+import { ChatRoom, Message } from 'src/schemas/chatRoom.schema';
 import { ChatRoomService } from './chatRoom.service';
 
 @Controller('chat-room')
@@ -15,7 +15,7 @@ export class ChatRoomController {
   }
 
   @Get(':id')
-  async getChatRoomMessages(@Param('id') id: string) {
+  async getChatRoomMessages(@Param('id') id: string): Promise<Message[]> {
     return await this.chatRoomService.getChatRoomMessages(id);
   }
 
